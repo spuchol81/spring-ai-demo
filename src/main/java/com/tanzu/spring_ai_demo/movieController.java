@@ -78,8 +78,8 @@ public class movieController {
         throws JsonProcessingException {
       String[] propertiesToInclude = {"title", "imdbID", "plot", "poster"};
       var outputParser = new BeanOutputParser<>(Movie.class);
-      SearchRequest query = SearchRequest.query(context).withTopK(8);
-      //SearchRequest query = SearchRequest.query(context).withSimilarityThreshold(0.3).withTopK(8);
+      SearchRequest query = SearchRequest.query(context).withTopK(6);
+      //SearchRequest query = SearchRequest.query(context).withSimilarityThreshold(0.2).withTopK(8);
       List<Document> similarMovies = movieVectorStore.similaritySearch(query);
       List<Movie> movList = new ArrayList<Movie>();
       List<String> matchingmovies =
