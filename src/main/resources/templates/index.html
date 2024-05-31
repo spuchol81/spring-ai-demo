@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        :root {
+             --primary-color: #34302D; /* Example primary color */
+             --secondary-color: #2DB33E; /* Example secondary color */
+             --background-color: #f5f5f5; /* Example background color */
+             --text-color:  #f5f5f5; /* Example text color */
+        }
+        h1 {
+         color: white;
+        }
+        form {
+         color: white;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: var( --primary-color);
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+            gap: 10px; /* Gap between columns */
+            padding: 10px;
+            background-color: var(--primary-color);
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+            gap: 10px; /* Gap between columns */
+            padding: 10px;
+        }
+        .search-form button
+        {
+            background-color: #2ea44f;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 6px;
+        }
+        .container button {
+            background-color: #2ea44f;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 6px;
+        }
+        .movie-poster {
+            width: 200px;
+            height: auto;
+            max-width: 100%;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: var(--secondary-color);
+        }
+        .tab button {
+            background-color: #2ea44f;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  margin: 4px 2px;
+  cursor: pointer;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-top: none;
+        }
+        .selected {
+            border: 2px solid blue;
+        }
+        img, h1{
+  display: inline-block;
+  vertical-align: middle;
+}
+    </style>
+</head>
+<body>
+    <img src="https://cdn.freebiesupply.com/logos/large/2x/spring-3-logo-png-transparent.png" alt="" width="50px" height="50px">
+    <h1>Movie Catalog</h1>
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'AllMovies')">All Movies</button>
+        <button class="tablinks" onclick="openTab(event, 'SearchMovies')">Search Movies</button>
+        <button class="tablinks" onclick="openTab(event, 'SelectedMovies')">Selected Movies</button>
+    </div>
+
+    <div id="AllMovies" class="tabcontent">
+        <div class="container" id="movieContainer">
+            <!-- Use Thymeleaf to iterate over movie data and generate movie posters -->
+        <div th:each="movie : ${movies}">
+            <div>
+                <a th:href="@{'/movie/' + ${movie.imdbID}}">
+                    <img class="movie-poster" th:src="${movie.poster}" alt="Movie Poster">
+                </a>
+                <button th:poster="${movie.poster}" th:imdbID="${movie.imdbID}" th:onclick="selectMovie(this.getAttribute('poster'), this.getAttribute('imdbID'))">Select</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div id="SearchMovies" class="tabcontent">
+        <form class="search-form" id="searchForm">
+            <label for="search">Search Movies:</label>
+            <input type="text" id="search" name="context" placeholder="Enter search context">
+            <button type="submit">Search</button>
+        </form>
+        <div class="container" id="searchResults">
+            <!-- Search results will be dynamically loaded here -->
+        </div>
+    </div>
+    <div id="SelectedMovies" class="tabcontent">
+        <div id="selectedMovies"></div>
+        <!-- Button to generate poster -->
+    <button id="generateButton">Generate Poster</button>
+    </div>
+
+    <script>
+       var selectedMovies = []; // Array to store selected movie IMDb IDs
+ 
+       // Function to select a movie
+       function selectMovie(poster, imdbID) {
+            selectedMovies.push(imdbID);
+            console.log(selectedMovies);
+            // Update the Selected Movies tab
+            var selectedMoviesDiv = document.getElementById('selectedMovies');
+            var selectedMovieDiv = document.createElement('div');
+            selectedMovieDiv.innerHTML = '<a imdbID="'+ imdbID +'" href="/movie/' + imdbID + '"><img class="movie-poster" src="' + poster + '" alt="Movie Poster"></a>';
+            selectedMoviesDiv.appendChild(selectedMovieDiv);
+        }
+
+        // Function to open a tab
+        function openTab(event, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            event.currentTarget.classList.add("active");
+        }
+
+        // Function to fetch and display search results
+        function searchMovies(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get the search context from the input field
+            var searchContext = document.getElementById('search').value;
+
+            // Make an AJAX request to fetch search results
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Parse response JSON
+                        var movies = JSON.parse(xhr.responseText);
+                        
+                        // Update the content of the search results container with search results
+                        var searchResults = document.getElementById('searchResults');
+                        searchResults.innerHTML = '';
+
+                        movies.forEach(function(movie) {
+                            var movieDiv = document.createElement('div');
+                            var selectButton = document.createElement('button');
+                            selectButton.textContent = 'Select';
+                            selectButton.setAttribute('imdbid', movie.imdbID);
+                            selectButton.setAttribute('poster', movie.poster);
+                            selectButton.classList.add('select-button');
+                            selectButton.onclick = function() {
+                            selectMovie(movie.poster, movie.imdbID);
+                            };
+                            var link = document.createElement('a');
+                            link.href = '/movie/' + movie.imdbID;
+                            var image = document.createElement('img');
+                            image.src = movie.poster;
+                            image.alt = 'Movie Poster';
+                            image.classList.add('movie-poster');
+                            link.appendChild(image);
+                            movieDiv.appendChild(link);
+                            movieDiv.appendChild(selectButton);
+                            searchResults.appendChild(movieDiv);
+                        });
+                    } else {
+                        console.error('Error fetching search results');
+                    }
+                }
+            };
+            xhr.open('GET', '/api/movies/search?context=' + searchContext);
+            xhr.send();
+        }
+
+    // Attach event listener to the search form
+document.getElementById('searchForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    console.log('Form submitted'); // Add debugging message
+    searchMovies(event);
+});
+
+        // Open the All Movies tab by default
+        document.getElementsByClassName("tablinks")[0].click();
+        document.addEventListener('DOMContentLoaded', function() {
+        var generateButton = document.getElementById('generateButton');
+        generateButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default button behavior
+            generateButton.disabled = true; // Disable the button to prevent multiple clicks
+            generateButton.innerText = 'Generating...';
+            // Get the IMDb IDs of the selected movies
+            var imdbID1 = document.querySelector('#selectedMovies > div:first-child > a').getAttribute('imdbid');
+            var imdbID2 = document.querySelector('#selectedMovies > div:last-child > a').getAttribute('imdbid');
+            
+            // Construct the URL with the IMDb IDs and redirect
+            var generateUrl = 'http://localhost:8080/movie/generate?movie1=' + imdbID1 + '&movie2=' + imdbID2;
+            window.location.href = generateUrl;
+
+        });
+    });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+            gap: 10px; /* Gap between columns */
+            padding: 10px;
+        }
+        .movie-poster {
+            width: 200px;
+            height: auto;
+            max-width: 100%;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-top: none;
+        }
+        .selected {
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Catalog</h1>
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'AllMovies')">All Movies</button>
+        <button class="tablinks" onclick="openTab(event, 'SearchMovies')">Search Movies</button>
+    </div>
+
+    <div id="AllMovies" class="tabcontent">
+        <div class="container" id="movieContainer">
+            <!-- Use Thymeleaf to iterate over movie data and generate movie posters -->
+        <div th:each="movie : ${movies}">
+            <div>
+                <a th:href="@{'/movie/' + ${movie.imdbID}}">
+                    <img class="movie-poster" th:src="${movie.poster}" alt="Movie Poster">
+                </a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div id="SearchMovies" class="tabcontent">
+        <form class="search-form" id="searchForm">
+            <label for="search">Search Movies:</label>
+            <input type="text" id="search" name="context" placeholder="Enter search context">
+            <button type="submit">Search</button>
+        </form>
+        <div class="container" id="searchResults">
+            <!-- Search results will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <script>
+       var selectedMovies = []; // Array to store selected movie IMDb IDs
+
+// Function to handle click on movie poster
+function handleClick(event, imdbID) {
+    if (event.ctrlKey || event.metaKey) {
+        // Ctrl or Command key is pressed, toggle selection
+        toggleSelection(event.target, imdbID);
+    } else {
+        // No modifier key is pressed, clear previous selection and select current movie
+        clearSelection();
+        selectMovie(event.target, imdbID);
+    }
+}
+// Function to select a movie
+function selectMovie(poster, imdbID) {
+            selectedMovies.push(imdbID);
+            poster.classList.add('selected');
+        }
+        // Function to open a tab
+        function openTab(event, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            event.currentTarget.classList.add("active");
+        }
+
+        // Function to fetch and display search results
+        function searchMovies(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get the search context from the input field
+            var searchContext = document.getElementById('search').value;
+
+            // Make an AJAX request to fetch search results
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Parse response JSON
+                        var movies = JSON.parse(xhr.responseText);
+                        
+                        // Update the content of the search results container with search results
+                        var searchResults = document.getElementById('searchResults');
+                        searchResults.innerHTML = '';
+
+                        movies.forEach(function(movie) {
+                            var movieDiv = document.createElement('div');
+                            var link = document.createElement('a');
+                            link.href = '/movie/' + movie.imdbID;
+                            var image = document.createElement('img');
+                            image.src = movie.poster;
+                            image.alt = 'Movie Poster';
+                            image.classList.add('movie-poster');
+                            link.appendChild(image);
+                            movieDiv.appendChild(link);
+                            searchResults.appendChild(movieDiv);
+                        });
+                    } else {
+                        console.error('Error fetching search results');
+                    }
+                }
+            };
+            xhr.open('GET', '/rambi/movies/search?context=' + searchContext);
+            xhr.send();
+        }
+
+    // Attach event listener to the search form
+document.getElementById('searchForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    console.log('Form submitted'); // Add debugging message
+    searchMovies(event);
+});
+
+        // Open the All Movies tab by default
+        document.getElementsByClassName("tablinks")[0].click();
+    </script>
+</body>
+</html>

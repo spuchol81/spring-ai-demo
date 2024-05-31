@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <style>
+        :root {
+             --primary-color: #34302D; /* Example primary color */
+             --secondary-color: #2DB33E; /* Example secondary color */
+             --background-color: #f5f5f5; /* Example background color */
+             --text-color:  #f5f5f5; /* Example text color */
+        }
+        h1 {
+         color: white;
+        }
+        p {
+
+         color: white;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: var( --primary-color);
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+            gap: 10px; /* Gap between columns */
+            padding: 10px;
+            background-color: var(--primary-color);
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+            gap: 10px; /* Gap between columns */
+            padding: 10px;
+        }
+        .movie-poster {
+            width: 200px;
+            height: auto;
+            max-width: 100%;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: var(--secondary-color);
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-top: none;
+        }
+        .selected {
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="${movie.title}"></h1>
+    <img th:src="${movie.poster}" alt="Movie Poster" style="width: 200px; height: auto;">
+    <p th:text="${movie.plot}"></p>
+    <!-- Add more details as needed -->
+</body>
+</html>

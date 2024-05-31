@@ -1,0 +1,17 @@
+#vectordbsuffix: ollama
+vectordbsuffix: openai
+spring:
+  config:
+    import: "optional:classpath:/creds.yaml"
+  ai:
+    ollama:
+      embedding:
+        model: llama3
+      chat:
+        model: llama3
+    openai:
+      chat:
+        options:
+          functions:
+          n: 3
+
