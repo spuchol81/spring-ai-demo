@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import com.tanzu.spring_ai_demo.Movie;
 
 public class movieController {
 
@@ -76,8 +78,6 @@ public class movieController {
     public ResponseEntity<List<Movie>> getmatchingMovies(
         @RequestParam(value = "context", defaultValue = "All the movies") String context)
         throws JsonProcessingException {
-      String[] propertiesToInclude = {"title", "imdbID", "plot", "poster"};
-      var outputParser = new BeanOutputParser<>(Movie.class);
       SearchRequest query = SearchRequest.query(context).withTopK(6);
       //SearchRequest query = SearchRequest.query(context).withSimilarityThreshold(0.2).withTopK(8);
       List<Document> similarMovies = movieVectorStore.similaritySearch(query);
@@ -85,9 +85,8 @@ public class movieController {
       List<String> matchingmovies =
           similarMovies.stream().map(Document::getContent).collect(Collectors.toList());
       for (String currentmovie : matchingmovies) {
-        HashMap<String, String> hashMap = parseStringToMap(currentmovie, propertiesToInclude);
-        String curData = objectMapper.writeValueAsString(hashMap);
-        movList.add(outputParser.parse(curData));
+        Movie curMovie = mapToMovie(currentmovie);
+        movList.add(curMovie);
       }
       return new ResponseEntity<>(movList, HttpStatus.OK);
     }
@@ -116,60 +115,23 @@ public class movieController {
     }
   }
 
-  private static HashMap<String, String> parseStringToMap(
-      String dataString, String[] propertiesToInclude) {
-    HashMap<String, String> map = new HashMap<>();
 
-    // Define pattern to match key-value pairs
-    Pattern pattern = Pattern.compile("\\{?([^,=]+)=([^,}]+)\\}?");
-    Matcher matcher = pattern.matcher(dataString);
+  public static Movie mapToMovie(String movieString) {
+    Map<String, String> movieMap = new HashMap<>();
+    String[] pairs = movieString.substring(1, movieString.length() - 1).split(", ");
 
-    // Iterate through matches and populate the map with specified properties
-    while (matcher.find()) {
-      String key = matcher.group(1).trim();
-      String value = matcher.group(2).trim();
-      for (String property : propertiesToInclude) {
-        if (key.equals(property)) {
-          map.put(key, value);
-          break;
-        }
-      }
+    for (String pair : pairs) {
+        String[] keyValue = pair.split("=", 2); // Specify limit to avoid exception
+        movieMap.put(keyValue[0], keyValue.length > 1 ? keyValue[1] : ""); // Handle empty value if there's no "=" in the pair
     }
 
-    return map;
-  }
+    Movie movie = new Movie();
+    movie.setImdbID(movieMap.get("imdbID"));
+    movie.setTitle(movieMap.get("title"));
+    movie.setPlot(movieMap.get("plot"));
+    movie.setPoster(movieMap.get("poster"));
+    // Set other attributes as needed
 
-  @Component
-  public static class Movie {
-    private String imdbID;
-    private String title;
-    private String plot;
-    private String poster;
-
-    public Movie() {}
-
-    public String getImdbID() {
-      return imdbID;
-    }
-
-    public String getTitle() {
-      return title;
-    }
-
-    public String getPlot() {
-      return plot;
-    }
-
-    public String getPoster() {
-      return poster;
-    }
-
-    public void setPoster(String poster) {
-      this.poster = poster;
-    }
-
-    /*public void setMovieUrl(String movieUrl) {
-      this.movieUrl = movieUrl;
-    }*/
-  }
+    return movie;
+}
 }

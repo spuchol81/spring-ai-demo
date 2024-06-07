@@ -1,6 +1,6 @@
 package com.tanzu.spring_ai_demo;
 
-import com.tanzu.spring_ai_demo.movieController.Movie;
+import com.tanzu.spring_ai_demo.Movie;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

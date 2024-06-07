@@ -1,4 +1,5 @@
 #vectordbsuffix: ollama
+debug: true
 vectordbsuffix: openai
 spring:
   config:
@@ -12,6 +13,4 @@ spring:
     openai:
       chat:
         options:
-          functions:
-          n: 3
-
+          model: gpt-4o
