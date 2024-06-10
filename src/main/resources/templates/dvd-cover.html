@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <style>
+       body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('https://img.freepik.com/free-photo/movie-background-collage_23-2149876009.jpg?t=st=1718020215~exp=1718023815~hmac=984a91c55a91cb93789e2477e9318facc77c9c101776e06f83bf1db4bc548d00&w=1380') repeat center center fixed;
+    margin: 0;
+}
+
+.dvd-cover {
+    width: 500px;
+    height: 800px;
+    background: url('https://img.freepik.com/free-photo/movie-background-collage_23-2149876034.jpg?w=826&t=st=1718018532~exp=1718019132~hmac=5c2d73908650a25e0f5260d27fac544a1f92be1fb810df17b1adff0ea8d9e065') repeat center center;
+    background-size: cover;
+    border: 1px solid #cccccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #d1bebe;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: 250;
+    margin: 10px 0;
+    text-align: center;
+    text-transform: uppercase;
+    padding-bottom: 5px;
+}
+
+.summary, .details {
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.summary h2, .details h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 5px;
+}
+
+.summary p, .details ul {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.details ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.details li {
+    margin-bottom: 5px;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
+#play-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#play-button:hover {
+    background-color: #555;
+}
+    </style>
+</head>
+<body>
+    <div class="dvd-cover">
+        
+        <div class="header">
+            <img th:src="${movie.poster}" alt="Movie Poster" style="width: 200px; height: auto;">
+            <h1 class="title" th:text="${movie.title}"></h1>
+        </div>
+        <div class="summary">
+            <h2>Summary</h2>
+            <p th:text="${movie.plot}">Movie Plot</p>
+        </div>
+        <div class="audio-container">
+            <audio id="audio-player" controls>
+                <source th:src="@{'http://localhost:8080/api/tts/read?plot=' + ${movie.plot}}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+    </div>
+</body>
+</html>

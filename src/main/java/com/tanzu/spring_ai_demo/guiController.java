@@ -22,12 +22,20 @@ public class guiController {
     return "index";
   }
 
-  @GetMapping("/movie/{imdbID}")
+  /*@GetMapping("/movie/{imdbID}")
   public String movieDetails(Model model, @PathVariable String imdbID) {
     RestTemplate restTemplate = new RestTemplate();
     Movie movie = restTemplate.getForObject(MOVIE_API_URL + "/" + imdbID, Movie.class);
     model.addAttribute("movie", movie);
     return "movie-details";
+  }*/
+
+  @GetMapping("/movie/{imdbID}")
+  public String movieDetails(Model model, @PathVariable String imdbID) {
+    RestTemplate restTemplate = new RestTemplate();
+    Movie movie = restTemplate.getForObject(MOVIE_API_URL + "/" + imdbID, Movie.class);
+    model.addAttribute("movie", movie);
+    return "dvd-cover";
   }
 
   @GetMapping("/movie/generate")
@@ -40,6 +48,6 @@ public class guiController {
         restTemplate.getForObject(
             GEN_API_URL + "?movie1=" + movie1 + "&movie2=" + movie2, Movie.class);
     model.addAttribute("movie", movie);
-    return "movie-details";
+    return "dvd-cover";
   }
 }

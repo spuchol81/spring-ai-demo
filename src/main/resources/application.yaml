@@ -1,5 +1,5 @@
 #vectordbsuffix: ollama
-debug: true
+#debug: true
 vectordbsuffix: openai
 spring:
   config:

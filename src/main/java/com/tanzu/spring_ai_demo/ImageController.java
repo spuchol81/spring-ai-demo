@@ -105,7 +105,7 @@ public class ImageController {
                                                                 Return description, nothing else.
                                                                 """)
                                                          .media(MimeTypeUtils.IMAGE_JPEG, new URI(movie1obj.getPoster()).toURL())
-                                                         .media(MimeTypeUtils.IMAGE_JPEG, new URI(movie2obj.getPoster()).toURL());;
+                                                         .media(MimeTypeUtils.IMAGE_JPEG, new URI(movie2obj.getPoster()).toURL());
                                             } catch (MalformedURLException e) {
                                               // TODO Auto-generated catch block
                                               e.printStackTrace();
