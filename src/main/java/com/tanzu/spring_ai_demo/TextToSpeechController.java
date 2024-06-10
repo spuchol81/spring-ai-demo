@@ -1,5 +1,9 @@
 package com.tanzu.spring_ai_demo;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -17,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,20 +35,39 @@ import reactor.core.publisher.Flux;
 public class TextToSpeechController {
   private final Logger logger = LoggerFactory.getLogger(TextToSpeechController.class);
   private final OpenAiAudioSpeechModel ttsModel;
+  private final ChatClient chatClient;
   @Autowired
   private Environment env;
 
+  @Value("classpath:/movie-pitch-translation.st")
+    private Resource moviePitch;
 
-  public TextToSpeechController(OpenAiAudioSpeechModel ttsModel) {
+
+  public TextToSpeechController(OpenAiAudioSpeechModel ttsModel, @Qualifier("myChatClientProvider") ChatClient.Builder chatClientBuilder) {
     this.ttsModel = ttsModel;
+    this.chatClient = chatClientBuilder.build();
   }
 
   @GetMapping("read")
-  public ResponseEntity<byte[]> readPlot(@RequestParam(value = "plot", defaultValue = "Please enter a movie description!") String plot) {
+  public ResponseEntity<byte[]> readPlot(@RequestParam(value = "plot", defaultValue = "Please enter a movie description!") String plot,
+                                            @RequestParam(value = "lang", defaultValue = "") String lang) {
     OpenAiAudioSpeechOptions speechOptions = OpenAiAudioSpeechOptions.builder()
     .withVoice(OpenAiAudioApi.SpeechRequest.Voice.NOVA)
     .build();
-    SpeechPrompt speechPrompt = new SpeechPrompt(plot, speechOptions);
+    SpeechPrompt speechPrompt;
+    if (lang == null || lang.isEmpty()) {
+        speechPrompt = new SpeechPrompt(plot, speechOptions);
+    }
+    else{
+        String translatedPlot = chatClient.prompt()
+                              .user(p -> p.text(moviePitch).param("lang", lang)
+                                                           .param("moviepitch", plot)
+                                   )
+                              .call()
+                              .content()
+                              .toString();
+        speechPrompt = new SpeechPrompt(translatedPlot, speechOptions);  
+    }
     SpeechResponse response = ttsModel.call(speechPrompt);
     byte[] responseAsBytes = response.getResult().getOutput();
     // Set the response headers

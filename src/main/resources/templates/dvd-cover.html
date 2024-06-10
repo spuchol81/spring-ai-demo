@@ -104,8 +104,9 @@
             <p th:text="${movie.plot}">Movie Plot</p>
         </div>
         <div class="audio-container">
+            <img src="https://images.freeimages.com/fic/images/icons/280/flag_2/256/france_flag.png?fmt=webp&h=350" alt="Flag Icon" width="40px" height="30px">
             <audio id="audio-player" controls>
-                <source th:src="@{'http://localhost:8080/api/tts/read?plot=' + ${movie.plot}}" type="audio/mp3">
+                <source th:src="@{'http://localhost:8080/api/tts/read?plot=' + ${movie.plot} +'&lang=french'}" type="audio/mp3">
                 Your browser does not support the audio element.
             </audio>
         </div>
