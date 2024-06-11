@@ -52,7 +52,7 @@ public class TextToSpeechController {
   public ResponseEntity<byte[]> readPlot(@RequestParam(value = "plot", defaultValue = "Please enter a movie description!") String plot,
                                             @RequestParam(value = "lang", defaultValue = "") String lang) {
     OpenAiAudioSpeechOptions speechOptions = OpenAiAudioSpeechOptions.builder()
-    .withVoice(OpenAiAudioApi.SpeechRequest.Voice.NOVA)
+    .withVoice(OpenAiAudioApi.SpeechRequest.Voice.SHIMMER)
     .build();
     SpeechPrompt speechPrompt;
     if (lang == null || lang.isEmpty()) {

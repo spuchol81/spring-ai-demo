@@ -18,5 +18,6 @@ Using the titles, plots as inspiration, generate the following:
 
 Use the details below to generate the new movie title and plot.
 Use the description of the posters to generate the new poster.
+This poster has to be in portrait mode.
 Take care of not generating any violence.
 
