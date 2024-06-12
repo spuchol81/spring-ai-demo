@@ -12,7 +12,8 @@
              --text-color:  #f5f5f5; /* Example text color */
         }
         h1 {
-         color: white;
+         color: rgb(212, 208, 208);
+         font-family: 'Calibri', 'Arial', sans-serif;
         }
         form {
          color: white;
@@ -111,11 +112,11 @@
 </head>
 <body>
     <img src="https://cdn.freebiesupply.com/logos/large/2x/spring-3-logo-png-transparent.png" alt="" width="50px" height="50px">
-    <h1>Movie Catalog</h1>
+    <h1>Spring Movie Center</h1>
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'AllMovies')">All Movies</button>
         <button class="tablinks" onclick="openTab(event, 'SearchMovies')">Search Movies</button>
-        <button class="tablinks" onclick="openTab(event, 'SelectedMovies')">Selected Movies</button>
+        <button class="tablinks" onclick="openTab(event, 'SelectedMovies')">Mashup Generator</button>
     </div>
 
     <div id="AllMovies" class="tabcontent">
@@ -145,7 +146,7 @@
     <div id="SelectedMovies" class="tabcontent">
         <div id="selectedMovies"></div>
         <!-- Button to generate poster -->
-    <button id="generateButton">Generate Poster</button>
+    <button id="generateButton">Generate Mashup</button>
     </div>
 
     <script>
